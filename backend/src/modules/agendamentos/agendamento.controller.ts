@@ -4,11 +4,11 @@ import { AgendamentoService, ConflitoDeHorarioError } from "./agendamento.servic
 export class AgendamentoController {
   constructor(private readonly service: AgendamentoService) {}
 
-  criar = (req: Request, res: Response): void => {
+  criar = async (req: Request, res: Response): Promise<void> => {
     const { cliente, servico, inicio, duracaoMinutos } = req.body;
 
     try {
-      const agendamento = this.service.criar({
+      const agendamento = await this.service.criar({
         cliente,
         servico,
         inicio: new Date(inicio),
@@ -24,7 +24,7 @@ export class AgendamentoController {
     }
   };
 
-  listar = (_req: Request, res: Response): void => {
-    res.json(this.service.listar());
+  listar = async (_req: Request, res: Response): Promise<void> => {
+    res.json(await this.service.listar());
   };
 }

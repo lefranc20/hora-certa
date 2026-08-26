@@ -15,4 +15,7 @@ build/
 !.vscode/extensions.json
 .idea/
 
+backend/*.db
+backend/*.db-journal
 backend/prisma/*.db
+backend/src/generated/

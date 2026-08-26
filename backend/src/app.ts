@@ -1,7 +1,8 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
-import { agendamentoRouter } from "./modules/agendamentos/agendamento.routes.js";
+import { createAgendamentoRouter } from "./modules/agendamentos/agendamento.routes.js";
+import { PrismaAgendamentoRepository } from "./modules/agendamentos/agendamento.repository.prisma.js";
 
 export const app = express();
 
@@ -13,4 +14,4 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use(agendamentoRouter);
+app.use(createAgendamentoRouter(new PrismaAgendamentoRepository()));
