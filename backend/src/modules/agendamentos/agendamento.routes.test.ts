@@ -26,6 +26,18 @@ describe("POST /agendamentos", () => {
     expect(response.body.id).toBeDefined();
   });
 
+  it("retorna 400 e lista os campos quando faltam dados obrigatórios", async () => {
+    const app = criarAppDeTeste();
+
+    const response = await request(app).post("/agendamentos").send({ cliente: "Ana" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.erro).toMatch(/obrigatórios/i);
+    expect(response.body.campos).toEqual(
+      expect.arrayContaining(["servico", "inicio", "duracaoMinutos"]),
+    );
+  });
+
   it("retorna 409 ao tentar agendar em horário já ocupado", async () => {
     const app = criarAppDeTeste();
 

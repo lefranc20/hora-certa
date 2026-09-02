@@ -29,9 +29,26 @@ function App() {
     listarAgendamentos().then(setAgendamentos).catch(console.error);
   }, []);
 
+  function validarFormulario(): string | null {
+    if (!cliente.trim()) return "Informe o nome do cliente.";
+    if (!servico.trim()) return "Informe o serviço.";
+    if (!inicio) return "Escolha o horário de início.";
+    if (!Number.isFinite(duracaoMinutos) || duracaoMinutos < 5) {
+      return "A duração deve ser de pelo menos 5 minutos.";
+    }
+    return null;
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setErro(null);
+
+    const erroDeValidacao = validarFormulario();
+    if (erroDeValidacao) {
+      setErro(erroDeValidacao);
+      return;
+    }
+
     setEnviando(true);
 
     try {
@@ -50,6 +67,11 @@ function App() {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
         setErro(error.response.data.erro ?? "Horário já ocupado.");
+      } else if (axios.isAxiosError(error) && error.response?.status === 400) {
+        setErro(
+          error.response.data.erro ??
+            "Todos os campos são obrigatórios para realizar o agendamento.",
+        );
       } else {
         setErro("Não foi possível criar o agendamento.");
       }
@@ -65,7 +87,7 @@ function App() {
         <p>Agende um horário e veja a agenda em tempo real.</p>
       </header>
 
-      <form className="form-agendamento" onSubmit={handleSubmit}>
+      <form className="form-agendamento" onSubmit={handleSubmit} noValidate>
         <div className="linha">
           <label>
             Cliente

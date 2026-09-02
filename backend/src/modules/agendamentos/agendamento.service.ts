@@ -10,7 +10,7 @@ export class ConflitoDeHorarioError extends Error {
   }
 }
 
-interface CriarAgendamentoInput {
+export interface CriarAgendamentoInput {
   cliente: string;
   servico: string;
   inicio: Date;
