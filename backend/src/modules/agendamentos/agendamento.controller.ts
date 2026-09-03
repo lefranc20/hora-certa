@@ -10,7 +10,7 @@ export class AgendamentoController {
 
     if (!validacao.ok) {
       res.status(400).json({
-        erro: "Todos os campos são obrigatórios para realizar o agendamento.",
+        erro: validacao.mensagem,
         campos: validacao.camposInvalidos,
       });
       return;

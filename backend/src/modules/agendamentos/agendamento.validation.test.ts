@@ -1,16 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { validarEntradaAgendamento } from "./agendamento.validation.js";
 
+const AGORA = new Date("2026-09-02T12:00:00.000Z");
+
 const entradaValida = {
   cliente: "Ana",
   servico: "Corte",
-  inicio: "2026-10-01T10:00:00",
+  inicio: "2026-09-10T10:00:00.000Z",
   duracaoMinutos: 30,
 };
 
+const validar = (corpo: unknown) => validarEntradaAgendamento(corpo, AGORA);
+
 describe("validarEntradaAgendamento", () => {
   it("aceita uma entrada completa e devolve os dados normalizados", () => {
-    const resultado = validarEntradaAgendamento(entradaValida);
+    const resultado = validar(entradaValida);
 
     expect(resultado.ok).toBe(true);
     if (resultado.ok) {
@@ -22,7 +26,7 @@ describe("validarEntradaAgendamento", () => {
   });
 
   it("remove espaços em volta de cliente e servico", () => {
-    const resultado = validarEntradaAgendamento({
+    const resultado = validar({
       ...entradaValida,
       cliente: "  Ana  ",
       servico: "  Corte  ",
@@ -33,20 +37,21 @@ describe("validarEntradaAgendamento", () => {
   });
 
   it("aponta o campo que faltou", () => {
-    const resultado = validarEntradaAgendamento({
+    const resultado = validar({
       servico: "Corte",
-      inicio: "2026-10-01T10:00:00",
+      inicio: entradaValida.inicio,
       duracaoMinutos: 30,
     });
 
     expect(resultado.ok).toBe(false);
     if (!resultado.ok) {
       expect(resultado.camposInvalidos).toEqual(["cliente"]);
+      expect(resultado.mensagem).toMatch(/obrigatórios/i);
     }
   });
 
   it("trata string vazia ou só espaços como ausente", () => {
-    const resultado = validarEntradaAgendamento({
+    const resultado = validar({
       ...entradaValida,
       cliente: "   ",
       servico: "",
@@ -61,10 +66,7 @@ describe("validarEntradaAgendamento", () => {
   });
 
   it("rejeita data inválida", () => {
-    const resultado = validarEntradaAgendamento({
-      ...entradaValida,
-      inicio: "não é uma data",
-    });
+    const resultado = validar({ ...entradaValida, inicio: "não é uma data" });
 
     expect(resultado.ok).toBe(false);
     if (!resultado.ok) {
@@ -74,10 +76,7 @@ describe("validarEntradaAgendamento", () => {
 
   it("rejeita duração ausente, zero, negativa ou não numérica", () => {
     for (const duracaoMinutos of [undefined, 0, -15, "abc"]) {
-      const resultado = validarEntradaAgendamento({
-        ...entradaValida,
-        duracaoMinutos,
-      });
+      const resultado = validar({ ...entradaValida, duracaoMinutos });
 
       expect(resultado.ok).toBe(false);
       if (!resultado.ok) {
@@ -87,7 +86,7 @@ describe("validarEntradaAgendamento", () => {
   });
 
   it("lista todos os campos de uma vez quando o corpo vem vazio", () => {
-    const resultado = validarEntradaAgendamento({});
+    const resultado = validar({});
 
     expect(resultado.ok).toBe(false);
     if (!resultado.ok) {
@@ -100,8 +99,35 @@ describe("validarEntradaAgendamento", () => {
     }
   });
 
+  it("rejeita início no passado", () => {
+    const resultado = validar({
+      ...entradaValida,
+      inicio: "2026-09-01T10:00:00.000Z",
+    });
+
+    expect(resultado.ok).toBe(false);
+    if (!resultado.ok) {
+      expect(resultado.camposInvalidos).toEqual(["inicio"]);
+      expect(resultado.mensagem).toMatch(/futuro/i);
+    }
+  });
+
+  it("campo ausente tem prioridade sobre início no passado", () => {
+    const resultado = validar({
+      servico: "Corte",
+      inicio: "2020-01-01T00:00:00.000Z",
+      duracaoMinutos: 30,
+    });
+
+    expect(resultado.ok).toBe(false);
+    if (!resultado.ok) {
+      expect(resultado.camposInvalidos).toContain("cliente");
+      expect(resultado.mensagem).toMatch(/obrigatórios/i);
+    }
+  });
+
   it("não quebra com corpo undefined ou não-objeto", () => {
-    expect(validarEntradaAgendamento(undefined).ok).toBe(false);
-    expect(validarEntradaAgendamento("texto solto").ok).toBe(false);
+    expect(validar(undefined).ok).toBe(false);
+    expect(validar("texto solto").ok).toBe(false);
   });
 });

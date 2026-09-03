@@ -9,9 +9,14 @@ export const CAMPOS_OBRIGATORIOS = [
 
 export type CampoObrigatorio = (typeof CAMPOS_OBRIGATORIOS)[number];
 
+export const MENSAGEM_CAMPOS_OBRIGATORIOS =
+  "Todos os campos são obrigatórios para realizar o agendamento.";
+export const MENSAGEM_INICIO_NO_PASSADO =
+  "O horário de início precisa ser no futuro.";
+
 export type ResultadoValidacao =
   | { ok: true; dados: CriarAgendamentoInput }
-  | { ok: false; camposInvalidos: CampoObrigatorio[] };
+  | { ok: false; mensagem: string; camposInvalidos: CampoObrigatorio[] };
 
 function texto(valor: unknown): string {
   return typeof valor === "string" ? valor.trim() : "";
@@ -29,10 +34,16 @@ function numero(valor: unknown): number {
 
 /**
  * Valida o corpo cru de um POST /agendamentos.
- * Todos os campos são obrigatórios; devolve os dados já normalizados
- * quando válidos, ou a lista de campos que faltaram/vieram inválidos.
+ * Todos os campos são obrigatórios e `inicio` precisa ser no futuro.
+ * Devolve os dados já normalizados quando válidos, ou a mensagem
+ * de erro com os campos que causaram a falha.
+ *
+ * `agora` é injetável para deixar os testes independentes do relógio.
  */
-export function validarEntradaAgendamento(corpo: unknown): ResultadoValidacao {
+export function validarEntradaAgendamento(
+  corpo: unknown,
+  agora: Date = new Date(),
+): ResultadoValidacao {
   const entrada = (corpo ?? {}) as Record<string, unknown>;
   const camposInvalidos: CampoObrigatorio[] = [];
 
@@ -51,7 +62,19 @@ export function validarEntradaAgendamento(corpo: unknown): ResultadoValidacao {
   }
 
   if (camposInvalidos.length > 0) {
-    return { ok: false, camposInvalidos };
+    return {
+      ok: false,
+      mensagem: MENSAGEM_CAMPOS_OBRIGATORIOS,
+      camposInvalidos,
+    };
+  }
+
+  if (inicio.getTime() <= agora.getTime()) {
+    return {
+      ok: false,
+      mensagem: MENSAGEM_INICIO_NO_PASSADO,
+      camposInvalidos: ["inicio"],
+    };
   }
 
   return { ok: true, dados: { cliente, servico, inicio, duracaoMinutos } };

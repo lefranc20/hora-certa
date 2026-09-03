@@ -97,6 +97,23 @@
   color: var(--text);
 }
 
+.lista-agendamentos .contador {
+  flex-shrink: 0;
+  margin-left: 12px;
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.lista-agendamentos .contador[data-estado="andamento"] {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.lista-agendamentos .contador[data-estado="encerrado"] {
+  opacity: 0.55;
+}
+
 .vazio {
   color: var(--text);
   font-size: 14px;
