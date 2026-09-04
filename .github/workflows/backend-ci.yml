@@ -31,6 +31,7 @@ jobs:
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/horacerta_test"
       DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/horacerta_test"
+      JWT_SECRET: "segredo-de-teste-nao-usar-em-producao"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

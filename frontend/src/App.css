@@ -6,6 +6,13 @@
   box-sizing: border-box;
 }
 
+.app-header-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .app-header h1 {
   font-size: 32px;
   margin: 0 0 4px;
@@ -14,6 +21,23 @@
 .app-header p {
   color: var(--text);
   margin-bottom: 32px;
+}
+
+.link-area-interna {
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.botao-sair {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  height: fit-content;
 }
 
 .form-agendamento {
@@ -39,7 +63,11 @@
   text-align: left;
 }
 
-.form-agendamento input {
+.form-agendamento input,
+.form-agendamento select,
+.form-login input,
+.form-profissional input,
+.form-cancelamento textarea {
   font: inherit;
   padding: 8px 10px;
   border-radius: 6px;
@@ -48,7 +76,18 @@
   color: var(--text-h);
 }
 
-.form-agendamento button {
+.form-cancelamento textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.form-agendamento button,
+.form-login button,
+.form-profissional button,
+.form-cancelamento button {
   font: inherit;
   padding: 10px;
   border-radius: 6px;
@@ -58,9 +97,119 @@
   cursor: pointer;
 }
 
-.form-agendamento button:disabled {
+.form-agendamento button:disabled,
+.form-login button:disabled,
+.form-profissional button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.form-login,
+.form-profissional {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+  max-width: 320px;
+}
+
+.form-login label,
+.form-profissional label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+}
+
+.botao-secundario {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.linha-botoes {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+section h2 {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.lista-profissionais {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.lista-profissionais li {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag-ativo,
+.tag-inativo,
+.tag-cancelado {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.tag-ativo {
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.tag-inativo,
+.tag-cancelado {
+  color: var(--text);
+  background: var(--code-bg);
+}
+
+.lista-interna li {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.linha-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.observacao-cancelamento {
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+}
+
+.form-cancelamento {
+  display: grid;
+  gap: 8px;
 }
 
 .erro {

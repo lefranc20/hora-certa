@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validarEntradaAgendamento } from "./agendamento.validation.js";
+import { validarCancelamento, validarEntradaAgendamento } from "./agendamento.validation.js";
 
 const AGORA = new Date("2026-09-02T12:00:00.000Z");
 
@@ -8,6 +8,7 @@ const entradaValida = {
   servico: "Corte",
   inicio: "2026-09-10T10:00:00.000Z",
   duracaoMinutos: 30,
+  profissionalId: "prof-1",
 };
 
 const validar = (corpo: unknown) => validarEntradaAgendamento(corpo, AGORA);
@@ -22,6 +23,7 @@ describe("validarEntradaAgendamento", () => {
       expect(resultado.dados.servico).toBe("Corte");
       expect(resultado.dados.inicio).toBeInstanceOf(Date);
       expect(resultado.dados.duracaoMinutos).toBe(30);
+      expect(resultado.dados.profissionalId).toBe("prof-1");
     }
   });
 
@@ -41,12 +43,22 @@ describe("validarEntradaAgendamento", () => {
       servico: "Corte",
       inicio: entradaValida.inicio,
       duracaoMinutos: 30,
+      profissionalId: "prof-1",
     });
 
     expect(resultado.ok).toBe(false);
     if (!resultado.ok) {
       expect(resultado.camposInvalidos).toEqual(["cliente"]);
       expect(resultado.mensagem).toMatch(/obrigatórios/i);
+    }
+  });
+
+  it("rejeita profissionalId ausente ou vazio", () => {
+    const resultado = validar({ ...entradaValida, profissionalId: "" });
+
+    expect(resultado.ok).toBe(false);
+    if (!resultado.ok) {
+      expect(resultado.camposInvalidos).toContain("profissionalId");
     }
   });
 
@@ -95,6 +107,7 @@ describe("validarEntradaAgendamento", () => {
         "servico",
         "inicio",
         "duracaoMinutos",
+        "profissionalId",
       ]);
     }
   });
@@ -117,6 +130,7 @@ describe("validarEntradaAgendamento", () => {
       servico: "Corte",
       inicio: "2020-01-01T00:00:00.000Z",
       duracaoMinutos: 30,
+      profissionalId: "prof-1",
     });
 
     expect(resultado.ok).toBe(false);
@@ -129,5 +143,27 @@ describe("validarEntradaAgendamento", () => {
   it("não quebra com corpo undefined ou não-objeto", () => {
     expect(validar(undefined).ok).toBe(false);
     expect(validar("texto solto").ok).toBe(false);
+  });
+});
+
+describe("validarCancelamento", () => {
+  it("exige observação quando quem cancela é PROFISSIONAL", () => {
+    const resultado = validarCancelamento({}, "PROFISSIONAL");
+
+    expect(resultado.ok).toBe(false);
+  });
+
+  it("aceita observação preenchida para PROFISSIONAL", () => {
+    const resultado = validarCancelamento({ observacao: "Cliente remarcou" }, "PROFISSIONAL");
+
+    expect(resultado.ok).toBe(true);
+    if (resultado.ok) expect(resultado.dados.observacao).toBe("Cliente remarcou");
+  });
+
+  it("observação é opcional para ADMIN", () => {
+    const resultado = validarCancelamento({}, "ADMIN");
+
+    expect(resultado.ok).toBe(true);
+    if (resultado.ok) expect(resultado.dados.observacao).toBeNull();
   });
 });

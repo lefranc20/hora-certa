@@ -4,4 +4,7 @@ export interface Agendamento {
   servico: string;
   inicio: Date;
   fim: Date;
+  profissionalId: string;
+  canceladoEm: Date | null;
+  observacaoCancelamento: string | null;
 }

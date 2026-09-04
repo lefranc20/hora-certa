@@ -12,10 +12,44 @@ datasource db {
   provider = "postgresql"
 }
 
-model Agendamento {
+enum Papel {
+  ADMIN
+  PROFISSIONAL
+}
+
+model Profissional {
   id       String   @id @default(uuid())
-  cliente  String
-  servico  String
-  inicio   DateTime
-  fim      DateTime
+  nome     String
+  ativo    Boolean  @default(true)
+  criadoEm DateTime @default(now())
+
+  usuario      Usuario?
+  agendamentos Agendamento[]
+}
+
+model Usuario {
+  id             String   @id @default(uuid())
+  nome           String
+  email          String   @unique
+  senhaHash      String
+  papel          Papel
+  profissionalId String?  @unique
+  criadoEm       DateTime @default(now())
+
+  profissional Profissional? @relation(fields: [profissionalId], references: [id])
+}
+
+model Agendamento {
+  id                     String    @id @default(uuid())
+  cliente                String
+  servico                String
+  inicio                 DateTime
+  fim                    DateTime
+  profissionalId         String
+  canceladoEm            DateTime?
+  observacaoCancelamento String?
+
+  profissional Profissional @relation(fields: [profissionalId], references: [id])
+
+  @@index([profissionalId, inicio, fim])
 }

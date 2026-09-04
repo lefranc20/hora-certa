@@ -1,3 +1,4 @@
+import type { Papel } from "../auth/auth.types.js";
 import type { CriarAgendamentoInput } from "./agendamento.service.js";
 
 export const CAMPOS_OBRIGATORIOS = [
@@ -5,6 +6,7 @@ export const CAMPOS_OBRIGATORIOS = [
   "servico",
   "inicio",
   "duracaoMinutos",
+  "profissionalId",
 ] as const;
 
 export type CampoObrigatorio = (typeof CAMPOS_OBRIGATORIOS)[number];
@@ -61,6 +63,9 @@ export function validarEntradaAgendamento(
     camposInvalidos.push("duracaoMinutos");
   }
 
+  const profissionalId = texto(entrada.profissionalId);
+  if (profissionalId === "") camposInvalidos.push("profissionalId");
+
   if (camposInvalidos.length > 0) {
     return {
       ok: false,
@@ -77,5 +82,33 @@ export function validarEntradaAgendamento(
     };
   }
 
-  return { ok: true, dados: { cliente, servico, inicio, duracaoMinutos } };
+  return {
+    ok: true,
+    dados: { cliente, servico, inicio, duracaoMinutos, profissionalId },
+  };
+}
+
+export type ResultadoValidacaoCancelamento =
+  | { ok: true; dados: { observacao: string | null } }
+  | { ok: false; mensagem: string };
+
+/**
+ * Observação de cancelamento é obrigatória quando quem cancela é um
+ * PROFISSIONAL; para ADMIN é opcional.
+ */
+export function validarCancelamento(
+  corpo: unknown,
+  papel: Papel,
+): ResultadoValidacaoCancelamento {
+  const entrada = (corpo ?? {}) as Record<string, unknown>;
+  const observacao = texto(entrada.observacao);
+
+  if (papel === "PROFISSIONAL" && observacao === "") {
+    return {
+      ok: false,
+      mensagem: "Informe uma observação para cancelar este agendamento.",
+    };
+  }
+
+  return { ok: true, dados: { observacao: observacao === "" ? null : observacao } };
 }
