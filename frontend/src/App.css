@@ -104,6 +104,70 @@
   cursor: not-allowed;
 }
 
+.aviso-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 16px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+
+.aviso-caixa {
+  max-width: 420px;
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  text-align: left;
+}
+
+.aviso-caixa p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.aviso-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.aviso-tabela th,
+.aviso-tabela td {
+  text-align: left;
+  padding: 5px 6px;
+  color: var(--text-h);
+}
+
+.aviso-tabela th {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.aviso-tabela tbody tr {
+  cursor: pointer;
+}
+
+.aviso-tabela tbody tr:hover {
+  background: var(--code-bg);
+}
+
+.aviso-tabela tr + tr td {
+  border-top: 1px solid var(--border);
+}
+
 .form-login,
 .form-profissional {
   display: grid;
