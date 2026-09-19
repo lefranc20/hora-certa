@@ -4,8 +4,8 @@ services:
     runtime: node
     plan: free
     rootDir: backend
-    buildCommand: npm install && npx prisma migrate deploy && npx prisma db seed && npm run build
-    startCommand: npm start
+    buildCommand: corepack yarn install --immutable && corepack yarn prisma migrate deploy && corepack yarn prisma db seed && corepack yarn build
+    startCommand: corepack yarn start
     envVars:
       - key: JWT_SECRET
         generateValue: true
