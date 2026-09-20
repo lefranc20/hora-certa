@@ -153,7 +153,7 @@ function PaginaPublica() {
     <>
       <header className="app-header">
         <div className="app-header-topo">
-          <h1>HoraCerta</h1>
+          <h1>HoraCerta · Agendamento</h1>
           <Link className="link-area-interna" to="/interna/entrar">
             Área Interna
           </Link>
@@ -161,96 +161,104 @@ function PaginaPublica() {
         <p>Agende um horário e veja a agenda em tempo real.</p>
       </header>
 
-      <form className="form-agendamento" onSubmit={handleSubmit} noValidate>
-        <label>
-          Profissional
-          <select
-            value={profissionalId}
-            onChange={(e) => setProfissionalId(e.target.value)}
-            required
-          >
-            {profissionais.length === 0 && <option value="">Nenhum profissional disponível</option>}
-            {profissionais.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nome}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="linha">
-          <label>
-            Cliente
-            <input
-              value={cliente}
-              onChange={(e) => setCliente(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Serviço
-            <input
-              value={servico}
-              onChange={(e) => setServico(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div className="linha">
-          <label>
-            Início
-            <input
-              type="datetime-local"
-              value={inicio}
-              onChange={(e) => setInicio(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Duração (min)
-            <input
-              type="number"
-              min={5}
-              step={5}
-              value={duracaoMinutos}
-              onChange={(e) => setDuracaoMinutos(Number(e.target.value))}
-              required
-            />
-          </label>
-        </div>
-        {erro && <p className="erro">{erro}</p>}
-        <button type="submit" disabled={enviando || !profissionalId}>
-          {enviando ? "Agendando..." : "Agendar"}
-        </button>
-      </form>
+      <div className="publico-colunas">
+        <section>
+          <h2>Agendar</h2>
+          <form className="form-agendamento" onSubmit={handleSubmit} noValidate>
+            <label>
+              Profissional
+              <select
+                value={profissionalId}
+                onChange={(e) => setProfissionalId(e.target.value)}
+                required
+              >
+                {profissionais.length === 0 && <option value="">Nenhum profissional disponível</option>}
+                {profissionais.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="linha">
+              <label>
+                Cliente
+                <input
+                  value={cliente}
+                  onChange={(e) => setCliente(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Serviço
+                <input
+                  value={servico}
+                  onChange={(e) => setServico(e.target.value)}
+                  required
+                />
+              </label>
+            </div>
+            <div className="linha">
+              <label>
+                Início
+                <input
+                  type="datetime-local"
+                  value={inicio}
+                  onChange={(e) => setInicio(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Duração (min)
+                <input
+                  type="number"
+                  min={5}
+                  step={5}
+                  value={duracaoMinutos}
+                  onChange={(e) => setDuracaoMinutos(Number(e.target.value))}
+                  required
+                />
+              </label>
+            </div>
+            {erro && <p className="erro">{erro}</p>}
+            <button type="submit" disabled={enviando || !profissionalId}>
+              {enviando ? "Agendando..." : "Agendar"}
+            </button>
+          </form>
+        </section>
 
-      {agendamentos.length === 0 ? (
-        <p className="vazio">Nenhum agendamento ainda.</p>
-      ) : (
-        <ul className="lista-agendamentos">
-          {agendamentos.map((agendamento) => {
-            const contador = tempoRelativo(
-              agendamento.inicio,
-              agendamento.fim,
-              agora,
-            );
-            return (
-              <li key={agendamento.id}>
-                <div>
-                  <div className="servico">
-                    {agendamento.servico} — {agendamento.cliente}
-                  </div>
-                  <div className="horario">
-                    {formatarPeriodo(agendamento.inicio, agendamento.fim)}
-                  </div>
-                </div>
-                <span className="contador" data-estado={contador.estado}>
-                  {contador.texto}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+        <section>
+          <h2>Agenda do profissional</h2>
+          {agendamentos.length === 0 ? (
+            <p className="vazio">Nenhum agendamento ainda.</p>
+          ) : (
+            <ul className="lista-agendamentos">
+              {agendamentos.map((agendamento) => {
+                const contador = tempoRelativo(
+                  agendamento.inicio,
+                  agendamento.fim,
+                  agora,
+                );
+                return (
+                  <li key={agendamento.id}>
+                    <div>
+                      <div className="servico">
+                        {agendamento.servico} — {agendamento.cliente}
+                      </div>
+                      <div className="horario">
+                        {formatarPeriodo(agendamento.inicio, agendamento.fim)}
+                      </div>
+                    </div>
+                    <span className="contador" data-estado={contador.estado}>
+                      {contador.texto}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      </div>
     </>
   );
 }

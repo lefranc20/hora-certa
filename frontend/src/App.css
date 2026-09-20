@@ -15,7 +15,15 @@
 
 .app-header h1 {
   font-size: 32px;
-  margin: 0 0 4px;
+  /* O :root define uma altura de linha fixa (145% de 18px), que aperta o
+     título quando ele quebra em duas linhas. */
+  line-height: 1.25;
+  text-wrap: balance;
+  margin: 0 0 8px;
+}
+
+.app-header {
+  text-align: left;
 }
 
 .app-header p {
@@ -26,6 +34,7 @@
 .link-area-interna {
   font-size: 14px;
   color: var(--accent);
+  white-space: nowrap;
 }
 
 .botao-sair {
@@ -61,6 +70,8 @@
   font-size: 14px;
   color: var(--text);
   text-align: left;
+  /* Sem isto, a largura mínima do campo impede a coluna de encolher. */
+  min-width: 0;
 }
 
 .form-agendamento input,
@@ -74,6 +85,9 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .form-cancelamento textarea {
@@ -131,6 +145,10 @@
   text-align: left;
 }
 
+.aviso-caixa .tabela-rolagem {
+  overflow-x: auto;
+}
+
 .aviso-caixa p {
   margin: 0 0 10px;
   font-size: 13px;
@@ -142,6 +160,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .aviso-tabela th,
@@ -177,6 +196,33 @@
   padding: 20px;
   margin-bottom: 32px;
   max-width: 320px;
+}
+
+/* Página de login: card centralizado na coluna, como o título. */
+.form-login {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Formulário de login logo abaixo do cabeçalho, centralizado na horizontal. */
+.pagina-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.pagina-login .aviso-badge {
+  margin-bottom: 0;
+  align-self: center;
+}
+
+/* No admin, o formulário acompanha a largura da lista logo abaixo. */
+.form-profissional {
+  max-width: none;
 }
 
 .form-login label,
@@ -330,4 +376,96 @@ section h2 {
 .vazio {
   color: var(--text);
   font-size: 14px;
+}
+
+/* ---------------------------------------------------------------
+   Telas largas: a área interna do admin usa duas colunas.
+   --------------------------------------------------------------- */
+@media (min-width: 900px) {
+  /* Mesma largura em todas as páginas, para o quadro não saltar ao navegar. */
+  #root {
+    width: 1040px;
+  }
+
+  /* Listas de coluna única não acompanham a largura toda. */
+  .lista-agendamentos {
+    max-width: 640px;
+  }
+
+  .publico-colunas .lista-agendamentos,
+  .admin-colunas .lista-agendamentos {
+    max-width: none;
+  }
+
+  .publico-colunas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .publico-colunas > section {
+    margin-bottom: 0;
+  }
+
+  .admin-colunas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .admin-colunas > section {
+    margin-bottom: 0;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Celular: campos e listas empilhados, com área de toque maior.
+   --------------------------------------------------------------- */
+@media (max-width: 480px) {
+  #root {
+    padding: 24px 16px 48px;
+  }
+
+  /* Título menor para caber na mesma linha do link de navegação. */
+  .app-header h1 {
+    font-size: 26px;
+  }
+
+  .form-agendamento .linha {
+    grid-template-columns: 1fr;
+  }
+
+  .lista-agendamentos li,
+  .lista-profissionais li {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .linha-topo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .lista-agendamentos .contador {
+    margin-left: 0;
+  }
+
+  .botao-secundario,
+  .botao-sair {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  .link-area-interna {
+    padding-block: 10px;
+  }
+
+  .aviso-badge {
+    min-height: 44px;
+    align-items: center;
+  }
 }

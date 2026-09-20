@@ -182,7 +182,7 @@ function PaginaAdmin() {
     <>
       <header className="app-header">
         <div className="app-header-topo">
-          <h1>Área Interna — Admin</h1>
+          <h1>HoraCerta · Admin</h1>
           <button className="botao-sair" onClick={sair}>
             Sair
           </button>
@@ -190,8 +190,10 @@ function PaginaAdmin() {
         <p>{usuario?.nome}</p>
       </header>
 
-      <SecaoProfissionais />
-      <SecaoAgendaConsolidada />
+      <div className="admin-colunas">
+        <SecaoProfissionais />
+        <SecaoAgendaConsolidada />
+      </div>
     </>
   );
 }
