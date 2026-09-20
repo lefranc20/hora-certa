@@ -83,6 +83,9 @@ describe("POST /agendamentos", () => {
     });
 
     expect(response.status).toBe(409);
+    expect(response.body.erro).toBe(
+      "Este horário não está disponível. Escolha outro horário.",
+    );
   });
 
   it("permite o mesmo horário para profissionais diferentes", async () => {

@@ -5,10 +5,13 @@ export interface FiltroListagem {
   incluirCancelados?: boolean;
 }
 
+/** "conflito" quando o banco recusou o agendamento por sobreposição. */
+export type ResultadoSalvar = "criado" | "conflito";
+
 export interface AgendamentoRepository {
   listar(filtro?: FiltroListagem): Promise<Agendamento[]>;
   buscarPorId(id: string): Promise<Agendamento | null>;
-  salvar(agendamento: Agendamento): Promise<void>;
+  salvar(agendamento: Agendamento): Promise<ResultadoSalvar>;
   existeConflito(profissionalId: string, inicio: Date, fim: Date): Promise<boolean>;
   cancelar(
     id: string,
@@ -35,15 +38,8 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     return this.agendamentos.find((a) => a.id === id) ?? null;
   }
 
-  async salvar(agendamento: Agendamento): Promise<void> {
-    this.agendamentos.push(agendamento);
-  }
-
-  async existeConflito(
-    profissionalId: string,
-    inicio: Date,
-    fim: Date,
-  ): Promise<boolean> {
+  /** Faz o papel da restrição do banco, independente de `existeConflito`. */
+  private sobrepoe(profissionalId: string, inicio: Date, fim: Date): boolean {
     return this.agendamentos.some(
       (a) =>
         a.profissionalId === profissionalId &&
@@ -51,6 +47,25 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
         inicio < a.fim &&
         fim > a.inicio,
     );
+  }
+
+  async salvar(agendamento: Agendamento): Promise<ResultadoSalvar> {
+    if (
+      this.sobrepoe(agendamento.profissionalId, agendamento.inicio, agendamento.fim)
+    ) {
+      return "conflito";
+    }
+
+    this.agendamentos.push(agendamento);
+    return "criado";
+  }
+
+  async existeConflito(
+    profissionalId: string,
+    inicio: Date,
+    fim: Date,
+  ): Promise<boolean> {
+    return this.sobrepoe(profissionalId, inicio, fim);
   }
 
   async cancelar(

@@ -58,6 +58,28 @@ describe("AgendamentoService", () => {
     ).rejects.toThrow(ConflitoDeHorarioError);
   });
 
+  it("recusa o segundo agendamento quando duas requisições chegam juntas", async () => {
+    // `existeConflito` responde "livre" às duas; o banco desempata.
+    const repository = new InMemoryAgendamentoRepository();
+    repository.existeConflito = async () => false;
+    service = new AgendamentoService(repository, profissionais);
+
+    const dados = {
+      cliente: "Ana",
+      servico: "Corte",
+      inicio: new Date("2026-09-01T10:00:00"),
+      duracaoMinutos: 30,
+      profissionalId: anaId,
+    };
+
+    await service.criar(dados);
+
+    await expect(service.criar({ ...dados, cliente: "Bruno" })).rejects.toThrow(
+      ConflitoDeHorarioError,
+    );
+    expect(await repository.listar({ profissionalId: anaId })).toHaveLength(1);
+  });
+
   it("permite dois profissionais diferentes terem o mesmo horário", async () => {
     await service.criar({
       cliente: "Ana Cliente",

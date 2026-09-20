@@ -39,6 +39,7 @@ model Usuario {
   profissional Profissional? @relation(fields: [profissionalId], references: [id])
 }
 
+/// A migration 20260920112726 cria a EXCLUDE constraint "Agendamento_sem_sobreposicao".
 model Agendamento {
   id                     String    @id @default(uuid())
   cliente                String

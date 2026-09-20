@@ -105,4 +105,60 @@ describe("PrismaAgendamentoRepository", () => {
     );
     expect(aindaConflita).toBe(false);
   });
+
+  it("o banco recusa dois agendamentos sobrepostos do mesmo profissional", async () => {
+    const base = {
+      cliente: "Ana",
+      servico: "Corte",
+      profissionalId: anaId,
+      canceladoEm: null,
+      observacaoCancelamento: null,
+    };
+
+    const primeiro = await repository.salvar({
+      ...base,
+      id: randomUUID(),
+      inicio: new Date("2026-11-04T10:00:00"),
+      fim: new Date("2026-11-04T10:30:00"),
+    });
+    const sobreposto = await repository.salvar({
+      ...base,
+      id: randomUUID(),
+      inicio: new Date("2026-11-04T10:15:00"),
+      fim: new Date("2026-11-04T10:45:00"),
+    });
+    // Encostado no fim do primeiro: não é sobreposição.
+    const naEmenda = await repository.salvar({
+      ...base,
+      id: randomUUID(),
+      inicio: new Date("2026-11-04T10:30:00"),
+      fim: new Date("2026-11-04T11:00:00"),
+    });
+
+    expect(primeiro).toBe("criado");
+    expect(sobreposto).toBe("conflito");
+    expect(naEmenda).toBe("criado");
+    expect(await repository.listar({ profissionalId: anaId })).toHaveLength(2);
+  });
+
+  it("libera o horário de um agendamento cancelado", async () => {
+    const id = randomUUID();
+    const base = {
+      cliente: "Ana",
+      servico: "Corte",
+      profissionalId: anaId,
+      inicio: new Date("2026-11-05T10:00:00"),
+      fim: new Date("2026-11-05T10:30:00"),
+      canceladoEm: null,
+      observacaoCancelamento: null,
+    };
+
+    await repository.salvar({ ...base, id });
+    await repository.cancelar(id, {
+      canceladoEm: new Date("2026-11-05T09:00:00"),
+      observacaoCancelamento: "Cliente remarcou",
+    });
+
+    expect(await repository.salvar({ ...base, id: randomUUID() })).toBe("criado");
+  });
 });
