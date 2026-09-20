@@ -53,75 +53,80 @@ function PaginaLogin() {
   return (
     <>
       <header className="app-header">
-        <h1>Área Interna</h1>
-        <p>Entre com seu email e senha.</p>
+        <div className="app-header-topo">
+          <h1>HoraCerta · Área Interna</h1>
+          <Link className="link-area-interna" to="/">
+            Voltar ao agendamento
+          </Link>
+        </div>
+        <p>Entre com seu email e senha de administrador ou usuário interno.</p>
       </header>
 
-      <button
-        type="button"
-        className="aviso-badge"
-        aria-expanded={mostrarUsuarios}
-        onClick={() => setMostrarUsuarios((atual) => !atual)}
-      >
-        AVISO: Versão de testes — {mostrarUsuarios ? "ocultar usuários" : "ver usuários"}{" "}
-        {mostrarUsuarios ? "▲" : "▼"}
-      </button>
-
-      {mostrarUsuarios && (
-        <div className="aviso-caixa">
-          <p>
-            Esta é uma versão de demonstração do HoraCerta. Use uma das contas abaixo para
-            entrar (clique na linha para preencher o formulário).
-          </p>
-          <table className="aviso-tabela">
-            <thead>
-              <tr>
-                <th>Papel</th>
-                <th>Email</th>
-                <th>Senha</th>
-              </tr>
-            </thead>
-            <tbody>
-              {USUARIOS_DE_TESTE.map((u) => (
-                <tr key={u.email} onClick={() => usarUsuarioDeTeste(u)}>
-                  <td>{u.papel}</td>
-                  <td>{u.email}</td>
-                  <td>{u.senha}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <form className="form-login" onSubmit={handleSubmit} noValidate>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Senha
-          <input
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-        </label>
-        {erro && <p className="erro">{erro}</p>}
-        <button type="submit" disabled={enviando}>
-          {enviando ? "Entrando..." : "Entrar"}
+      <div className="pagina-login">
+        <button
+          type="button"
+          className="aviso-badge"
+          aria-expanded={mostrarUsuarios}
+          onClick={() => setMostrarUsuarios((atual) => !atual)}
+        >
+          AVISO: Versão de testes — {mostrarUsuarios ? "ocultar usuários" : "ver usuários"}{" "}
+          {mostrarUsuarios ? "▲" : "▼"}
         </button>
-      </form>
 
-      <p className="vazio">
-        <Link to="/">Voltar para o agendamento</Link>
-      </p>
+        {mostrarUsuarios && (
+          <div className="aviso-caixa">
+            <p>
+              Esta é uma versão de demonstração do HoraCerta. Use uma das contas abaixo para
+              entrar (clique na linha para preencher o formulário).
+            </p>
+            <div className="tabela-rolagem">
+              <table className="aviso-tabela">
+                <thead>
+                  <tr>
+                    <th>Papel</th>
+                    <th>Email</th>
+                    <th>Senha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {USUARIOS_DE_TESTE.map((u) => (
+                    <tr key={u.email} onClick={() => usarUsuarioDeTeste(u)}>
+                      <td>{u.papel}</td>
+                      <td>{u.email}</td>
+                      <td>{u.senha}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        <form className="form-login" onSubmit={handleSubmit} noValidate>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Senha
+            <input
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+          </label>
+          {erro && <p className="erro">{erro}</p>}
+          <button type="submit" disabled={enviando}>
+            {enviando ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+      </div>
     </>
   );
 }

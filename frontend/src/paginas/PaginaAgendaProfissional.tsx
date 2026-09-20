@@ -59,7 +59,7 @@ function PaginaAgendaProfissional() {
     <>
       <header className="app-header">
         <div className="app-header-topo">
-          <h1>Minha Agenda</h1>
+          <h1>HoraCerta · Minha Agenda</h1>
           <button className="botao-sair" onClick={sair}>
             Sair
           </button>
