@@ -15,8 +15,7 @@
 
 .app-header h1 {
   font-size: 32px;
-  /* O :root define uma altura de linha fixa (145% de 18px), que aperta o
-     título quando ele quebra em duas linhas. */
+  /* O :root fixa a altura de linha, apertando o título em duas linhas. */
   line-height: 1.25;
   text-wrap: balance;
   margin: 0 0 8px;
@@ -70,7 +69,7 @@
   font-size: 14px;
   color: var(--text);
   text-align: left;
-  /* Sem isto, a largura mínima do campo impede a coluna de encolher. */
+  /* Sem isto a coluna não encolhe. */
   min-width: 0;
 }
 
@@ -198,7 +197,6 @@
   max-width: 320px;
 }
 
-/* Página de login: card centralizado na coluna, como o título. */
 .form-login {
   margin-inline: auto;
   width: 100%;
@@ -207,7 +205,6 @@
   box-sizing: border-box;
 }
 
-/* Formulário de login logo abaixo do cabeçalho, centralizado na horizontal. */
 .pagina-login {
   display: flex;
   flex-direction: column;
@@ -220,7 +217,7 @@
   align-self: center;
 }
 
-/* No admin, o formulário acompanha a largura da lista logo abaixo. */
+/* Acompanha a largura da lista logo abaixo. */
 .form-profissional {
   max-width: none;
 }
@@ -378,16 +375,13 @@ section h2 {
   font-size: 14px;
 }
 
-/* ---------------------------------------------------------------
-   Telas largas: a área interna do admin usa duas colunas.
-   --------------------------------------------------------------- */
+/* Telas largas */
 @media (min-width: 900px) {
-  /* Mesma largura em todas as páginas, para o quadro não saltar ao navegar. */
+  /* Mesma largura em todas as páginas. */
   #root {
     width: 1040px;
   }
 
-  /* Listas de coluna única não acompanham a largura toda. */
   .lista-agendamentos {
     max-width: 640px;
   }
@@ -420,15 +414,13 @@ section h2 {
   }
 }
 
-/* ---------------------------------------------------------------
-   Celular: campos e listas empilhados, com área de toque maior.
-   --------------------------------------------------------------- */
+/* Celular */
 @media (max-width: 480px) {
   #root {
     padding: 24px 16px 48px;
   }
 
-  /* Título menor para caber na mesma linha do link de navegação. */
+  /* Cabe na mesma linha do link. */
   .app-header h1 {
     font-size: 26px;
   }

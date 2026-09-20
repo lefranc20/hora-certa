@@ -6,7 +6,7 @@ import type { Agendamento } from "./agendamento.types.js";
 
 export class ConflitoDeHorarioError extends Error {
   constructor() {
-    super("Já existe um agendamento nesse horário.");
+    super("Este horário não está disponível. Escolha outro horário.");
     this.name = "ConflitoDeHorarioError";
   }
 }
@@ -66,6 +66,7 @@ export class AgendamentoService {
 
     const fim = new Date(dados.inicio.getTime() + dados.duracaoMinutos * 60_000);
 
+    // 1ª barreira: caso comum.
     if (await this.repository.existeConflito(dados.profissionalId, dados.inicio, fim)) {
       throw new ConflitoDeHorarioError();
     }
@@ -81,7 +82,11 @@ export class AgendamentoService {
       observacaoCancelamento: null,
     };
 
-    await this.repository.salvar(agendamento);
+    // 2ª barreira: requisições simultâneas.
+    if ((await this.repository.salvar(agendamento)) === "conflito") {
+      throw new ConflitoDeHorarioError();
+    }
+
     return agendamento;
   }
 

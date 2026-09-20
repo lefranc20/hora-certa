@@ -122,7 +122,7 @@ function PaginaPublica() {
       const novo = await criarAgendamento({
         cliente,
         servico,
-        // datetime-local não tem fuso; o navegador converte para instante UTC
+        // datetime-local não tem fuso; o navegador converte para UTC
         inicio: new Date(inicio).toISOString(),
         duracaoMinutos,
         profissionalId,
@@ -135,7 +135,10 @@ function PaginaPublica() {
       setInicio("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
-        setErro(error.response.data.erro ?? "Horário já ocupado.");
+        setErro(
+          error.response.data.erro ??
+            "Este horário não está disponível. Escolha outro horário.",
+        );
       } else if (axios.isAxiosError(error) && error.response?.status === 400) {
         setErro(
           error.response.data.erro ??

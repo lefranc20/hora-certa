@@ -34,14 +34,7 @@ function numero(valor: unknown): number {
     : Number.NaN;
 }
 
-/**
- * Valida o corpo cru de um POST /agendamentos.
- * Todos os campos são obrigatórios e `inicio` precisa ser no futuro.
- * Devolve os dados já normalizados quando válidos, ou a mensagem
- * de erro com os campos que causaram a falha.
- *
- * `agora` é injetável para deixar os testes independentes do relógio.
- */
+/** Valida o corpo de POST /agendamentos. `agora` é injetável para os testes. */
 export function validarEntradaAgendamento(
   corpo: unknown,
   agora: Date = new Date(),
@@ -92,10 +85,7 @@ export type ResultadoValidacaoCancelamento =
   | { ok: true; dados: { observacao: string | null } }
   | { ok: false; mensagem: string };
 
-/**
- * Observação de cancelamento é obrigatória quando quem cancela é um
- * PROFISSIONAL; para ADMIN é opcional.
- */
+/** Observação é obrigatória para PROFISSIONAL e opcional para ADMIN. */
 export function validarCancelamento(
   corpo: unknown,
   papel: Papel,
